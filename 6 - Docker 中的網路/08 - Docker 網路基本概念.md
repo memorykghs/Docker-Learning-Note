@@ -44,7 +44,25 @@ docker run --net=none -d --name none memroykghs/hell-ospring-boot:0.0.1
 容器也不會有自己的 IP，而是使用宿主機的 IP 和 port。使用此模式的好處就是容器可以使用宿主機的 IP 地址與外部通訊，內部服務的 port 也可以使用宿主機的 port。
 
 ```docker 
-docker run --net=host -d --name none memroykghs/hell-ospring-boot:0.0.1
+docker run --net=host -d --name host memroykghs/hell-ospring-boot:0.0.1
+```
+
+### Bridge
+Docker 會建立一個新的 Network Namespace，並透過 Linux Bridge 來與原生網路互動。
+
+```docker
+docker run --network=bridge -d --name bridge memroykghs/hell-ospring-boot:0.0.1
+```
+
+當 Docker 程式啟動時，會在主機上建立一個名為 `docker0` 的虛擬網橋，宿主機上啟動的 Docker 容器會連線到這個虛擬網橋上，並建立一對 `veth pair`。Docker 會將一端掛載到 `docker0` 網橋上，另一端放入容器的 Network Namespace。
+
+另外，Bridge 模式是 Docker 的預設模式，啟動容器時不寫 `--net` 參數，就是使用 Bridge 模式。使用 `docker run -p` 時，實際上 Docker 是在 iptables 做了 DNAT 規則來實現通訊功能。
+
+### Container
+不會創造新的 Network Nanespace，而是和已經存在一個容器共享 Network Nanespace，包括網路卡、IP、port 等等。
+
+```docker
+docker run --network=container:$(docker ps --filter name=bridge -q) -d --name container memroykghs/hell-ospring-boot:0.0.1
 ```
 
 ## 小結
@@ -52,6 +70,8 @@ docker run --net=host -d --name none memroykghs/hell-ospring-boot:0.0.1
 | :---: | --- |
 | None | Docker Engine 不會管理任何網路功能，但 Container 會有自己的隔離網路空間 ( Network Nanespace ) |
 | Host | 和宿主機共用 Network Nanespace、IP 與 port |
+| Bridge | Docker 會建立全新的 Network Nanespace，並使用 Linux Bridge 來實現對外部的通訊
+| Container:$ID | 與現有的某個容器共用 Network Nanespace |
 
 ## 參考
 * https://philipzheng.gitbook.io/docker_practice/underly/network
