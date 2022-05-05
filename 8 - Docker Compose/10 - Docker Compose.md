@@ -17,6 +17,7 @@ Compose 可以使用 YAML 檔案來進行配置，Docker Compose 也能夠用於
 
 ## docker-compose 文件格式
 docker-compose 的預設文件格式就是 `docker-compose.yml`。
+* [docker-compose version](https://docs.docker.com/compose/compose-file/compose-file-v3/)
 
 ```yml
 # Part1 - docker compose 的版本
@@ -41,7 +42,7 @@ volumes:
   logvolume01: {}
 ```
 
-上面的作法是已經有現成的 Image 了，若尚未建立 Image，也可以使用下面的寫法，這樣一來執行 docker-compose 時
+上面的作法是已經有現成的 Image 了，若系統還沒有建立 Image，也可以使用下面的寫法，這樣一來執行 docker-compose 時，一旦發現沒有要使用的 Image，就會自動先 run dockerfile 建立 Image。
 ```yml
 services:
   web: # web 是自己定義的服務名稱
@@ -54,7 +55,7 @@ services:
 
 * `context` - 指定當前目錄
 * `dockerfile` - 指定目錄下的 dockerfile 名稱
-* `args` - 傳入參數
+* `args` - build image 時要傳入的參數
 
 ## Docker Compose 相關指令
 * `docker-compose start`
