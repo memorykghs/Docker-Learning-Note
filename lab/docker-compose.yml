@@ -1,0 +1,10 @@
+version: "3"
+services:
+    webapp:
+        # 指定 Image
+        image: httpd:alpine
+        ports:
+            - "80:80"
+        # 掛載一個 volume 到執行容器目錄下的 /data
+        volumes:
+            - "/data"

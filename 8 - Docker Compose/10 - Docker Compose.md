@@ -58,13 +58,86 @@ services:
 * `args` - build image 時要傳入的參數
 
 ## Docker Compose 相關指令
-* `docker-compose start`
-* `docker-compose stop`
+可以參考官網：https://docs.docker.com/compose/reference/
+
+### 執行 docker compose
+```docker
+# 前景執行
+docker-compose up
+
+# 背景執行
+docker-compose up -d
+```
+
+在資料夾中建立 `docker-compose.yml` 並使用 `docker-compose up` 將服務建立起來。
+
+```yml
+version: "3"
+services:
+    webapp:
+        # 指定 Image
+        image: httpd:alpine
+        ports:
+            - "80:80"
+        # 掛載一個 volume 到執行容器目錄下的 /data
+        volumes:
+            - "/data"
+```
+
+![](/images/docker/10-5.PNG)
+
+### 啟動 / 停止 docker compose
+```docker
+# 啟動
+docker-compose star
+
+# 停止
+docker-compose stop
+```
+
+### 移除 docker compose
+```docker
+# 與 docker-compose up 相反，但只移除掉 container，不移掉 volume
+# 移掉 container 再建立一個，Docker 會自動 mount 回來
+docker-compose down
+
+# 同步移除 volume
+docker-compose down -v
+```
+
+![](/images/docker/10-2.PNG)
+
+執行指令後可以看到會順便移除掉 network，因為 docker-compose 在建立的時候會將這些服務放在同一個網路底下，這樣一來他們就可以直接內部溝通。
+
+### 列出 containers
+```docker
+# 同 docker ps 一樣的功能
+docker-compose ps
+```
+![](/images/docker/10-3.PNG)
+
+### 監控 logs
+```docker
+docker-compose logs
+
+# follow logs，等 log 進來不斷滾動
+docker-compose logs -f
+```
+
+### 執行程式
+```docker
+docker-compose exec webapp sh
+```
+
+### 顯示執行程序 ( process )
+```docker
+docker-compose top
+```
+![](/images/docker/10-4.PNG)
+
+### 其他
 * `docker-compose pause`
 * `docker-compose unpause`
-* `docker-compose ps`
-* `docker-compose up`
-* `docker-compose down`
 
 ## 參考
 * https://docs.docker.com/compose/
